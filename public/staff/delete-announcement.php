@@ -11,9 +11,10 @@ if(is_post_request()) {
   $result = delete_only_announcement_of_user($id);
   if($result === true) {
     $_SESSION['message'] = 'Announcement was deleted.';
-    echo display_session_message(); 
     redirect_to(url_for('/staff/announcements.php'));
   } else {
+    $_SESSION['message'] = 'Sorry, you cannot delete this announcement.';
+    redirect_to(url_for('/staff/announcements.php'));
     echo mysqli_error($db);
     db_disconnect($db);
     exit;

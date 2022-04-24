@@ -296,6 +296,25 @@ function find_all_announcements_and_employee_by_announcement_id($id) {
   return $image; 
 }
 
+function update_only_announcement_of_user($announcement, $id) {
+  global $db;
+ 
+  $sql = "UPDATE announcement SET ";
+  $sql .= "announcement.announcement='" . $announcement['announcement'] . "' ";
+  $sql .= "WHERE announcement_id='" . $id . "' ";
+  $sql .= "AND announcement.employee_id='" . $_SESSION['logged_employee_id'] . "' ";
+  $sql .= "LIMIT 1";
+  
+  $result = mysqli_query($db, $sql);
+  return $result;
+  // if($result === true) {
+  //   $_SESSION['message'] = 'The announcement was updated successfully.';
+  //   return true;
+  // } else {
+  //   echo mysqli_error($db);
+  // }
+}
+
 // THIS IS FOR DELETING ANNOUNCEMENTS POSTED BY CURRENT USER
 function delete_only_announcement_of_user($id) {
   global $db;

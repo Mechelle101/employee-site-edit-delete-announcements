@@ -1,4 +1,3 @@
-
 <?php 
 require_once('../../private/initialize.php'); 
 require_login();
@@ -95,7 +94,7 @@ $announcement = find_announcement_by_id($id);
                   <p><?= $announcements['announcement']; ?></p>
                   <div id="add-employee">
                     <a class="action" href="<?php echo url_for('/staff/delete-announcement.php?announcement_id='. h(u($announcements['announcement_id']))); ?>">Delete</a>
-                    <a class="action" href="<?php echo url_for('/staff/delete-announcement.php?announcement_id='. h(u($announcements['announcement_id']))); ?>">Edit</a>
+                    <a class="action" href="<?php echo url_for('/staff/edit-announcement.php?announcement_id='. h(u($announcements['announcement_id']))); ?>">Edit</a>
                   </div>
                 </div>
                 <hr>

@@ -1,26 +1,34 @@
-<?php
-require_once('../../../private/initialize.php');
+<?php 
+require_once('../../../private/initialize.php'); 
 require_login();
 is_admin();
 
+if(!isset($_GET['announcement_id'])) {
+  redirect_to(url_for('/staff/admin/announcements.php'));
+}
+
 // Get the value and assign it to a local variable
 $id = $_GET['announcement_id'];
-$announcement = find_all_announcements_and_employee_by_announcement_id($id);
 
 if(is_post_request()) {
-
-  $result = delete_only_announcement_of_user($id);
+  // Handle form values sent by new.php
+  $announcement = [];
+  $announcement['announcement'] = $_POST['announcement'] ?? '';
+  // Could do form validations here...although best to do it in the function below
+  $result = update_only_announcement_of_user($announcement, $id);
   if($result === true) {
-    $_SESSION['message'] = 'Announcement was deleted.';
-    redirect_to(url_for('/staff/admin/announcements.php'));
+    $_SESSION['message'] = 'The announcement was updated successfully.';
+    redirect_to(url_for('staff/admin/announcements.php'));
   } else {
-    $_SESSION['message'] = 'Sorry, you cannot delete this announcement.';
-    redirect_to(url_for('/staff/admin/announcements.php'));
-    echo mysqli_error($db);
-    db_disconnect($db);
-    exit;
+    $_SESSION['message'] = 'Sorry you cannot update this announcement.';
+    redirect_to(url_for('staff/admin/announcements.php'));
+    // $errors = $result;
   }
+
+} else {
+  $announcement = find_announcement_by_id($id);
 }
+
 
 ?>
 
@@ -29,16 +37,16 @@ if(is_post_request()) {
 
   <head>
     <meta charset="utf-8">
-    <title>Delete Announcement</title>
+    <title>Edit Announcement</title>
     <link href="../../stylesheets/public-styles.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="../../images/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
-
+  <!-- Header -->
   <body>
     <div id="main-content">
       <header>
-        <a href="<?php echo url_for( 'staff/admin/index.php'); ?>"><img src="../../images/ppl-logo.png" alt="circle logo" width="100" height="100"></a>
+        <a href="<?php echo url_for('staff/admin/index.php'); ?>"><img src="../../images/ppl-logo.png" alt="circle logo" width="100" height="100"></a>
         <div id="header-content">
           <h1>Remarkable Employees</h1>
           <h4>Where We Come Together As A Team</h4>
@@ -53,7 +61,7 @@ if(is_post_request()) {
         <aside id="navigation">
           <nav id="main-nav">
             <ul>
-              <l1><a href="<?php echo url_for( '/staff/admin/index.php'); ?>">Admin Home</a></l1>
+              <l1><a href="<?php echo url_for('/staff/admin/index.php'); ?>">Admin Home</a></l1>
               <l1><a href="announcements.php">Announcements</a></l1>
               <l1><a href="images.php">Images</a></l1>
               <l1><a href="employee_list.php">Employees</a></l1>
@@ -61,28 +69,25 @@ if(is_post_request()) {
             </ul>
           </nav>
         </aside>
-        <!-- Main Body -->
+        <!-- Main body -->
         <article id="description">
           <div>
             <?php echo display_session_message(); ?>
-            <h1>Delete Announcement</h1>
-            <div id="add-employee" id="action">
-              <a class="action" href="<?php echo url_for('staff/admin/announcements.php'); ?>">Back to Announcements</a>
-            </div>
+            <h1>Edit Announcement</h1>
           </div>
-          <div id="delete">
-            <div id="image-display"> 
-              <h4>YOU MAY ONLY DELETE YOUR ANNOUNCEMENTS</h4>            
-              <p>UPLOADED BY: <?php echo h($announcement['first_name']) . " " .  h($announcement['last_name']); ?></p>
-              <p>ANNOUNCEMENT BODY</p>
-              <p><?php echo h($announcement['announcement']); ?></p>
-              <form action="<?php echo url_for('/staff/admin/delete-announcement.php?announcement_id=' . h(u($announcement['announcement_id']))); ?>" method="POST">
-                <p>Are you sure you want to delete this announcement?<input type="submit" name="submit" id="delete-employee" value="Delete Announcement"></p>
-              </form>
-            </div>
+          <hr>
+          <div>
+            <?php echo display_errors($errors); ?>
+            <form action="<?php echo url_for('/staff/admin/edit-announcement.php?announcement_id=' . h(u($id))); ?>" method="post">
+              <label for="announcement">Edit Your Announcement Here</label>
+              <input type='hidden' name="announcement" value=""><br>
+              <textarea id="announcement" name="announcement"  rows="5" cols="30"><?php echo h($announcement['announcement']); ?>" </textarea><br>
+              <button type='submit' name='submit'>Add Comment</button>
+            </form>
           </div>
         </article> 
       </main>
+      <!-- PAGE FOOTER -->
       <footer id="footer">
         <div id="my-info">
           <h4>Created By</h4>
