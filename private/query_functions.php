@@ -280,6 +280,33 @@ function insert_announcement($announcement) {
   }
 }
 
+// THIS IS FOR FINDING THE ANNOUNCEMENT POSTED BY CURRENT USER
+function find_all_announcements_and_employee_by_announcement_id($id) {
+  global $db;
+  $sql = "SELECT announcement.announcement_id, announcement.announcement, announcement.date, ";
+  $sql .= "employee.employee_id, employee.first_name, ";
+  $sql .= "employee.last_name FROM announcement ";
+  $sql .= "JOIN employee USING(employee_id) ";
+  $sql .= "WHERE announcement_id='" . db_escape($db, (int)$id) . "'";
+  $result = mysqli_query($db, $sql);
+
+  confirm_result_set($result);
+  $image = mysqli_fetch_assoc($result);
+  mysqli_free_result($result);
+  return $image; 
+}
+
+// THIS IS FOR DELETING ANNOUNCEMENTS POSTED BY CURRENT USER
+function delete_only_announcement_of_user($id) {
+  global $db;
+  $sql = "DELETE FROM announcement ";
+  $sql .= "WHERE announcement_id='" . db_escape($db, (int)$id) . "' ";
+  $sql .= "AND employee_id='" . $_SESSION['logged_employee_id'] . "' ";
+  $sql .= "LIMIT 1";
+  $result = mysqli_query($db, $sql);
+  return $result;
+}
+
 // THIS IS THE IMAGE QUERIES
 function find_image_by_id($id) {
   global $db;
@@ -314,7 +341,7 @@ function find_all_images_and_employee_names() {
 // FINDING ALL IMAGES AND EMPLOYEE WHO UPLOADED
 function find_all_images_and_employee_by_image_id($id) {
   global $db;
-  $sql = "SELECT Image.image_id, image.caption, image.file_name, image.upload_date, ";
+  $sql = "SELECT image.image_id, image.caption, image.file_name, image.upload_date, ";
   $sql .= "employee.employee_id, employee.first_name, ";
   $sql .= "employee.last_name FROM image ";
   $sql .= "JOIN employee USING(employee_id) ";

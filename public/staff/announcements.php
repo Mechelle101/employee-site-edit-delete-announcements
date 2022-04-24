@@ -83,7 +83,7 @@ $announcement = find_announcement_by_id($id);
             <!-- This re-displays the message and resubmits the announcement each time you refresh the page -->
             <?php echo display_session_message(); ?>
             <div id="display-announcement">
-              <h1>Reminders &amp; Announcements</h1>
+              <h1>Announcements &amp; Reminders</h1>
               
               <fieldset>   
               <?php
@@ -93,6 +93,10 @@ $announcement = find_announcement_by_id($id);
                 <div>
                   <p><?= $announcements['first_name'] . " " . $announcements['last_name'] . "<br>" . date_format(date_create($announcements['date']), "g:ia \o\\n l F jS\, Y"); ?></p>
                   <p><?= $announcements['announcement']; ?></p>
+                  <div id="add-employee">
+                    <a class="action" href="<?php echo url_for('/staff/delete-announcement.php?announcement_id='. h(u($announcements['announcement_id']))); ?>">Delete</a>
+                    <a class="action" href="<?php echo url_for('/staff/delete-announcement.php?announcement_id='. h(u($announcements['announcement_id']))); ?>">Edit</a>
+                  </div>
                 </div>
                 <hr>
                 <hr>
